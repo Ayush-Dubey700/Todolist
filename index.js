@@ -12,15 +12,21 @@ const db = new pg.Client({
   },
 });
 
+// Connect to the database
 db.connect();
+
+// Create the 'items' table if it doesn't exist
+db.query(`
+  CREATE TABLE IF NOT EXISTS items (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL
+  );
+`)
+.then(() => console.log('Table "items" is ready'))
+.catch(err => console.error('Error creating table:', err));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
-
-let items = [
-  { id: 1, title: "Buy milk" },
-  { id: 2, title: "Finish homework" },
-];
 
 app.get("/", async (req, res) => {
   try {
